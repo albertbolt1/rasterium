@@ -71,16 +71,6 @@ namespace Rasterium
 
            
             SDL_Event event;
-            while (SDL_PollEvent(&event))
-            {
-                if (event.type == SDL_EVENT_QUIT)
-                {
-                    running = false;
-                }
-            }
-
-            SDL_SetRenderDrawColor(renderer_, 0, 120, 0, 255);
-            SDL_RenderClear(renderer_);
 
             // performance counter will give us the current ticks
             Uint64 currentTime = SDL_GetPerformanceCounter();
@@ -89,9 +79,35 @@ namespace Rasterium
             deltaTime = (double)(currentTime - lastTime) / SDL_GetPerformanceFrequency();
             lastTime = currentTime;
 
-            // so if its been 15ms then it should be 100 * 0.015 = 1.5 pixels moved 
-            x_+= 10 * deltaTime;
-            y_+= 10 * deltaTime;
+            while (SDL_PollEvent(&event))
+            {
+                if (event.type == SDL_EVENT_QUIT)
+                {
+                    running = false;
+                }
+                else if(event.type == SDL_EVENT_KEY_DOWN)
+                {
+                    if(event.key.key == SDLK_UP)
+                    {
+                        y_ -= 10;
+                    }
+                    else if(event.key.key == SDLK_DOWN)
+                    {
+                        y_ += 10;
+                    }
+                    else if(event.key.key == SDLK_LEFT)
+                    {
+                        x_ -= 10;
+                    }
+                    else if(event.key.key == SDLK_RIGHT)
+                    {
+                        x_ += 10;
+                    }
+                }
+            }
+
+            SDL_SetRenderDrawColor(renderer_, 0, 120, 0, 255);
+            SDL_RenderClear(renderer_);
 
             SDL_FRect rect = { x_, y_, 200, 150 };
             SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255);
