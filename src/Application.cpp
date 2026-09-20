@@ -7,30 +7,30 @@ namespace Rasterium
 
     Application::Application()
     {
-       if(!SDL_Init(SDL_INIT_VIDEO))
-       {
-        std::cerr << "SDL_INIT failed" << SDL_GetError() << std::endl;
-        return;
-       }
+        if (!SDL_Init(SDL_INIT_VIDEO))
+        {
+            std::cerr << "SDL_INIT failed" << SDL_GetError() << std::endl;
+            return;
+        }
         window_ = SDL_CreateWindow(
             "Rasterium",
             800,
             600,
             0);
-        if(!SDL_ShowWindow(window_))
+        if (!SDL_ShowWindow(window_))
         {
             std::cerr << "SDL_ShowWindow failed" << SDL_GetError() << std::endl;
             return;
         }
-        if(!SDL_RaiseWindow(window_))
+        if (!SDL_RaiseWindow(window_))
         {
             std::cerr << "SDL_RaiseWindow failed" << SDL_GetError() << std::endl;
             return;
         }
-        if(!SDL_SetWindowPosition(
-            window_,
-            SDL_WINDOWPOS_CENTERED,
-            SDL_WINDOWPOS_CENTERED))
+        if (!SDL_SetWindowPosition(
+                window_,
+                SDL_WINDOWPOS_CENTERED,
+                SDL_WINDOWPOS_CENTERED))
         {
             std::cerr << "SDL_SetWindowPosition failed" << SDL_GetError() << std::endl;
             return;
@@ -38,16 +38,11 @@ namespace Rasterium
 
         renderer_ = SDL_CreateRenderer(window_, nullptr);
 
-        if(renderer_ == nullptr)
+        if (renderer_ == nullptr)
         {
             std::cerr << "SDL_CreateRenderer failed" << SDL_GetError() << std::endl;
             return;
         }
-
-
-
-
-
     }
 
     Application::~Application()
@@ -64,12 +59,11 @@ namespace Rasterium
 
         Uint64 lastTime = SDL_GetPerformanceCounter();
         double deltaTime = 0.0;
-        x_=100;
-        y_=100;
+        x_ = 100;
+        y_ = 100;
         while (running)
         {
 
-           
             SDL_Event event;
 
             // performance counter will give us the current ticks
@@ -85,35 +79,71 @@ namespace Rasterium
                 {
                     running = false;
                 }
-                else if(event.type == SDL_EVENT_KEY_DOWN)
+                else if (event.type == SDL_EVENT_KEY_UP)
                 {
-                    if(event.key.key == SDLK_UP)
+
+                    if (event.key.key == SDLK_UP)
                     {
-                        y_ -= 10;
+                        up_pressed_ = false;
                     }
-                    else if(event.key.key == SDLK_DOWN)
+                    else if (event.key.key == SDLK_DOWN)
                     {
-                        y_ += 10;
+                        down_pressed_ = false;
                     }
-                    else if(event.key.key == SDLK_LEFT)
+                    else if (event.key.key == SDLK_LEFT)
                     {
-                        x_ -= 10;
+                        left_pressed_ = false;
                     }
-                    else if(event.key.key == SDLK_RIGHT)
+                    else if (event.key.key == SDLK_RIGHT)
                     {
-                        x_ += 10;
+                        right_pressed_ = false;
                     }
                 }
+                else if (event.type == SDL_EVENT_KEY_DOWN)
+                {
+                    if (event.key.key == SDLK_UP)
+                    {
+                        up_pressed_ = true;
+                    }
+                    else if (event.key.key == SDLK_DOWN)
+                    {
+                        down_pressed_ = true;
+                    }
+                    else if (event.key.key == SDLK_LEFT)
+                    {
+                        left_pressed_ = true;
+                    }
+                    else if (event.key.key == SDLK_RIGHT)
+                    {
+                        right_pressed_ = true;
+                    }
+                }
+            }
+
+            if (up_pressed_)
+            {
+                y_ -= 100 * deltaTime;
+            }
+            if (down_pressed_)
+            {
+                y_ += 100 * deltaTime;
+            }
+            if (left_pressed_)
+            {
+                x_ -= 100 * deltaTime;
+            }
+            if (right_pressed_)
+            {
+                x_ += 100 * deltaTime;
             }
 
             SDL_SetRenderDrawColor(renderer_, 0, 120, 0, 255);
             SDL_RenderClear(renderer_);
 
-            SDL_FRect rect = { x_, y_, 200, 150 };
+            SDL_FRect rect = {x_, y_, 200, 150};
             SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255);
             SDL_RenderFillRect(renderer_, &rect);
             SDL_RenderPresent(renderer_);
         }
-
     }
 }
